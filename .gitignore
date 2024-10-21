@@ -1,0 +1,14 @@
+# Ignore SSH keys
+~/.ssh/
+
+# Ignore Ansible Vault files (if any)
+*.vault.yml
+
+# Ignore environment variable files (if any)
+*.env
+
+# Ignore marker files
+/eks/*.created
+/eks/*.deleted
+
+
