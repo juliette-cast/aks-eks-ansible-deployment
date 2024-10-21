@@ -1,4 +1,3 @@
-# aks-eks-ansible-deployment
 Ansible to deploy EKS and AKS clusters
 # AKS & EKS Ansible Deployment
 
