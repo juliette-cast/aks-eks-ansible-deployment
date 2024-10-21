@@ -1,8 +1,6 @@
 Ansible to deploy EKS and AKS clusters
 # AKS & EKS Ansible Deployment
 
-![Ansible Logo](https://www.ansible.com/hubfs/Ansible_Hero.png)
-
 ## Table of Contents
 
 - [Introduction](#introduction)
