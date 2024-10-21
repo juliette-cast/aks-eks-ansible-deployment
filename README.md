@@ -76,3 +76,6 @@ Ansible/
 │   └── ...
 ├── agent-latest.yaml
 └── cleanup.yml
+
+
+Link to Document: https://castai.atlassian.net/wiki/spaces/~712020360d7d5fb5d743958259ca9f06394a96/pages/edit-v2/2620293262?draftShareId=9fefb3eb-42bd-4d45-9cbb-63c4ecf10dea
