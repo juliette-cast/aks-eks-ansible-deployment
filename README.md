@@ -1,2 +1,81 @@
 # aks-eks-ansible-deployment
 Ansible to deploy EKS and AKS clusters
+# AKS & EKS Ansible Deployment
+
+![Ansible Logo](https://www.ansible.com/hubfs/Ansible_Hero.png)
+
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Project Structure](#project-structure)
+- [Setup and Installation](#setup-and-installation)
+- [Usage](#usage)
+  - [Deploying EKS Cluster](#deploying-eks-cluster)
+  - [Deploying AKS Cluster](#deploying-aks-cluster)
+- [Cleaning Up Resources](#cleaning-up-resources)
+- [Connecting Clusters to Lens](#connecting-clusters-to-lens)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+
+## Introduction
+
+Welcome to the **AKS & EKS Ansible Deployment** repository! This project provides a set of Ansible playbooks designed to automate the deployment and management of Kubernetes clusters on both Azure Kubernetes Service (AKS) and Amazon Elastic Kubernetes Service (EKS). By leveraging Infrastructure as Code (IaC) principles, you can efficiently set up, configure, and tear down your Kubernetes environments with ease.
+
+## Features
+
+- **Automated Deployment:** Seamlessly deploy AKS and EKS clusters using Ansible playbooks.
+- **Modular Playbooks:** Organized playbooks for creating necessary resources like VPCs, IAM roles, and Kubernetes clusters.
+- **Cleanup Scripts:** Easily remove deployed resources to avoid unnecessary costs.
+- **Integration with Lens:** Connect your Kubernetes clusters to Lens for visual management and monitoring.
+- **Version Control:** Keep track of your infrastructure changes with Git and GitHub.
+
+## Prerequisites
+
+Before you begin, ensure you have met the following requirements:
+
+### General
+
+- **Operating System:** macOS (tested on Catalina and later)
+- **Git:** Installed and configured with SSH authentication.
+- **Ansible:** Installed on your local machine.
+
+### AWS (EKS)
+
+- **AWS CLI:** Installed and configured with appropriate permissions.
+- **`eksctl`:** Installed for managing EKS clusters.
+- **IAM Permissions:** Ability to create IAM roles and policies.
+
+### Azure (AKS)
+
+- **Azure CLI:** Installed and logged in to your Azure account.
+- **kubectl:** Installed for interacting with Kubernetes clusters.
+- **Azure Permissions:** Ability to create resource groups and manage AKS clusters.
+
+### Optional
+
+- **Lens:** Installed for Kubernetes cluster visualization and management.
+
+## Project Structure
+
+Ansible/
+├── README.md
+├── .gitignore
+├── aks/
+│   ├── aks_assign_role.yml
+│   ├── aks_create_aks.yml
+│   ├── aks_create_rg.yml
+│   ├── aks_cleanup.yml
+│   └── ...
+├── eks/
+│   ├── deploy_eks.yml
+│   ├── create_iam.yml
+│   ├── create_vpc.yml
+│   ├── cleanup.yml
+│   ├── eks_service_role_policy.json
+│   └── ...
+├── agent-latest.yaml
+└── cleanup.yml
