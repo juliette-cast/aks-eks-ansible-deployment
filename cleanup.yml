@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Delete EKS cluster
+      eks_cluster:
+        name: my-eks-cluster
+        region: us-east-2
+        state: absent
+
+    - name: Delete VPC
+      ec2_vpc_net:
+        name: eks-vpc
+        region: us-east-2
+        state: absent
+

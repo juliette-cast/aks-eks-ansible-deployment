@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Create EKS Service Role
+      iam_role:
+        name: eks-service-role
+        assume_role_policy_document: "{{ lookup('file', 'eks_service_role_policy.json') }}"
+        managed_policies:
+          - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+          - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
+        state: present
+

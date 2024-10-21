@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Create EKS cluster with eksctl
+      command: >
+        eksctl create cluster --name my-eks-cluster --version 1.28
+        --region us-east-2 --nodegroup-name standard-workers --node-type t3.medium
+        --nodes 4 --nodes-min 2 --nodes-max 5
+

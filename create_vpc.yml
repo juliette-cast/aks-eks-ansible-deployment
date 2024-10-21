@@ -1,0 +1,34 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Create VPC
+      ec2_vpc_net:
+        name: eks-vpc
+        cidr_block: 10.0.0.0/16
+        region: us-east-2
+        state: present
+      register: vpc
+
+    - name: Create public subnet
+      ec2_vpc_subnet:
+        vpc_id: "{{ vpc.vpc.id }}"
+        cidr: 10.0.1.0/24
+        az: us-east-2a
+        map_public: yes
+        region: us-east-2
+
+    - name: Create private subnet
+      ec2_vpc_subnet:
+        vpc_id: "{{ vpc.vpc.id }}"
+        cidr: 10.0.2.0/24
+        az: us-east-2a
+        map_public: no
+        region: us-east-2
+
+    - name: Create internet gateway
+      ec2_vpc_igw:
+        vpc_id: "{{ vpc.vpc.id }}"
+        region: us-east-2
+        state: present
+
