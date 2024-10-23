@@ -46,11 +46,6 @@ Before you begin, ensure you have met the following requirements:
 - **`eksctl`:** Installed for managing EKS clusters.
 - **IAM Permissions:** Ability to create IAM roles and policies.
 
-### Azure (AKS)
-
-- **Azure CLI:** Installed and logged in to your Azure account.
-- **kubectl:** Installed for interacting with Kubernetes clusters.
-- **Azure Permissions:** Ability to create resource groups and manage AKS clusters.
 
 ### Optional
 
@@ -58,18 +53,21 @@ Before you begin, ensure you have met the following requirements:
 
 ## Project Structure
 
-Ansible/
+eks-ansible-deployment/
 ├── README.md
-├── .gitignore
-├── eks/
-│   ├── deploy_eks.yml
-│   ├── create_iam.yml
-│   ├── create_vpc.yml
-│   ├── cleanup.yml
-│   ├── eks_service_role_policy.json
-│   └── ...
-├── agent-latest.yaml
-└── cleanup.yml
+├── hosts.ini
+├── vars.yml
+├── eks-trust-policy.json
+├── eks-node-trust-policy.json
+├── create_vpc.yml
+├── deploy_eks.yml
+├── deploy_cast_ai.yml
+├── cleanup.yml
+
+
+## Create keypair 
+- aws ec2 create-key-pair --key-name my-ec2-keypair --query 'KeyMaterial' --output text > my-ec2-keypair.pem
+- chmod 400 my-ec2-keypair.pem
 
 ## Run the EKS deployment playbooks:
 
