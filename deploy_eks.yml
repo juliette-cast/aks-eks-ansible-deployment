@@ -1,10 +1,40 @@
----
-- hosts: localhost
+# deploy_eks.yml
+- name: Deploy EKS Cluster
+  hosts: local
   gather_facts: no
+  vars_files:
+    - vars.yml
   tasks:
-    - name: Create EKS cluster with eksctl
-      command: >
-        eksctl create cluster --name my-eks-cluster --version 1.28
-        --region us-east-2 --nodegroup-name standard-workers --node-type t3.medium
-        --nodes 4 --nodes-min 2 --nodes-max 5
+    - name: Create EKS Cluster
+      community.aws.eks_cluster:
+        name: "{{ cluster_name }}"
+        version: "{{ cluster_version }}"
+        region: "{{ aws_region }}"
+        role_arn: "arn:aws:iam::{{ aws_account_id }}:role/EKSRole"
+        resources_vpc_config:
+          subnetIds: "{{ public_subnets.results | map(attribute='subnet.id') | list }}"
+      register: eks_cluster
+
+    - name: Wait for EKS Cluster to become active
+      community.aws.eks_cluster_wait:
+        name: "{{ cluster_name }}"
+        region: "{{ aws_region }}"
+        status: "ACTIVE"
+
+    - name: Create Node Group
+      community.aws.eks_nodegroup:
+        cluster_name: "{{ cluster_name }}"
+        nodegroup_name: "{{ node_group_name }}"
+        node_role_arn: "arn:aws:iam::{{ aws_account_id }}:role/EKSNodeRole"
+        subnets: "{{ public_subnets.results | map(attribute='subnet.id') | list }}"
+        instance_types:
+          - "{{ node_instance_type }}"
+        scaling_config:
+          min_size: "{{ min_size }}"
+          max_size: "{{ max_size }}"
+          desired_size: "{{ desired_capacity }}"
+        disk_size: 20
+        ssh_key: "{{ ssh_key_name }}"
+        region: "{{ aws_region }}"
+
 
