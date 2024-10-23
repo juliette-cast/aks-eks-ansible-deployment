@@ -1,34 +1,66 @@
----
-- hosts: localhost
+# create_vpc.yml
+- name: Create VPC and Networking Components
+  hosts: local
   gather_facts: no
+  vars_files:
+    - vars.yml
   tasks:
     - name: Create VPC
-      ec2_vpc_net:
-        name: eks-vpc
-        cidr_block: 10.0.0.0/16
-        region: us-east-2
+      community.aws.ec2_vpc_net:
+        name: "{{ vpc_name }}"
+        cidr_block: "{{ cidr_block }}"
+        region: "{{ aws_region }}"
         state: present
       register: vpc
 
-    - name: Create public subnet
-      ec2_vpc_subnet:
+    - name: Create Internet Gateway
+      community.aws.ec2_vpc_igw:
         vpc_id: "{{ vpc.vpc.id }}"
-        cidr: 10.0.1.0/24
-        az: us-east-2a
+        region: "{{ aws_region }}"
+        state: present
+      register: igw
+
+    - name: Create Public Subnets
+      community.aws.ec2_vpc_subnet:
+        vpc_id: "{{ vpc.vpc.id }}"
+        cidr: "{{ item }}"
+        az: "{{ aws_region }}{{ loop.index }}"
+        region: "{{ aws_region }}"
         map_public: yes
-        region: us-east-2
+        state: present
+      loop: "{{ public_subnet_cidrs }}"
+      register: public_subnets
 
-    - name: Create private subnet
-      ec2_vpc_subnet:
+    - name: Create Private Subnets
+      community.aws.ec2_vpc_subnet:
         vpc_id: "{{ vpc.vpc.id }}"
-        cidr: 10.0.2.0/24
-        az: us-east-2a
-        map_public: no
-        region: us-east-2
+        cidr: "{{ item }}"
+        az: "{{ aws_region }}{{ loop.index }}"
+        region: "{{ aws_region }}"
+        state: present
+      loop: "{{ private_subnet_cidrs }}"
+      register: private_subnets
 
-    - name: Create internet gateway
-      ec2_vpc_igw:
+    - name: Create Public Route Table
+      community.aws.ec2_vpc_route_table:
         vpc_id: "{{ vpc.vpc.id }}"
-        region: us-east-2
+        tags:
+          Name: public-route-table
+        region: "{{ aws_region }}"
+        state: present
+      register: public_route_table
+
+    - name: Associate Public Subnets with Route Table
+      community.aws.ec2_vpc_route_table:
+        route_table_id: "{{ public_route_table.route_table.id }}"
+        subnets: "{{ public_subnets.results | map(attribute='subnet.id') | list }}"
+        region: "{{ aws_region }}"
         state: present
 
+    - name: Create Route to Internet Gateway
+      community.aws.ec2_vpc_route:
+        route_table_id: "{{ public_route_table.route_table.id }}"
+        destination_cidr_block: 0.0.0.0/0
+        gateway_id: "{{ igw.gateway_id }}"
+        region: "{{ aws_region }}"
+        state: present
