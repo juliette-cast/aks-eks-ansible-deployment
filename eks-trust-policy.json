@@ -11,3 +11,8 @@
     }
   ]
 }
+
+##Run the following commands to create the role and attach the policy:
+## aws iam create-role --role-name EKSRole --assume-role-policy-document file://eks-trust-policy.json
+
+## aws iam attach-role-policy --role-name EKSRole --policy-arn arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
