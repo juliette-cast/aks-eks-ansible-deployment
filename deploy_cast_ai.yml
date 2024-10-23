@@ -1,0 +1,29 @@
+# deploy_cast_ai.yml
+- name: Integrate CAST AI Components
+  hosts: local
+  gather_facts: no
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Install HTTP client
+      pip:
+        name: requests
+        state: present
+
+    - name: Register Cluster with CAST AI
+      uri:
+        url: "https://api.cast.ai/v1/kubernetes/external-clusters"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ cast_ai_api_token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          name: "{{ cluster_name }}"
+          provider: "aws"
+          region: "{{ aws_region }}"
+      register: cast_ai_response
+
+    - name: Output CAST AI Response
+      debug:
+        var: cast_ai_response.json
