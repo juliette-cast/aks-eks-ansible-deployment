@@ -61,12 +61,6 @@ Before you begin, ensure you have met the following requirements:
 Ansible/
 ├── README.md
 ├── .gitignore
-├── aks/
-│   ├── aks_assign_role.yml
-│   ├── aks_create_aks.yml
-│   ├── aks_create_rg.yml
-│   ├── aks_cleanup.yml
-│   └── ...
 ├── eks/
 │   ├── deploy_eks.yml
 │   ├── create_iam.yml
@@ -76,6 +70,29 @@ Ansible/
 │   └── ...
 ├── agent-latest.yaml
 └── cleanup.yml
+
+## Run the EKS deployment playbooks:
+
+ansible-playbook create_vpc.yml
+
+ansible-playbook create_iam.yml
+
+ansible-playbook deploy_eks.yml
+
+
+## Verify the cluster creation:
+
+aws ec2 describe-vpcs --region us-east-2
+
+aws eks describe-cluster --name my-eks-cluster --region us-east-2
+
+## Cleaning Up Resources
+
+ansible-playbook cleanup.yml
+
+## Add to lens
+
+aws eks update-kubeconfig --name your-cluster-name --region your-region
 
 
 Link to Document: https://castai.atlassian.net/wiki/spaces/~712020360d7d5fb5d743958259ca9f06394a96/pages/edit-v2/2620293262?draftShareId=9fefb3eb-42bd-4d45-9cbb-63c4ecf10dea
