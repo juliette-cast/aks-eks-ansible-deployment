@@ -1,16 +1,62 @@
----
-- hosts: localhost
+# cleanup.yml
+- name: Cleanup EKS Cluster and Networking Components
+  hosts: local
   gather_facts: no
+  vars_files:
+    - vars.yml
   tasks:
-    - name: Delete EKS cluster
-      eks_cluster:
-        name: my-eks-cluster
-        region: us-east-2
+    - name: Delete Node Group
+      community.aws.eks_nodegroup:
         state: absent
+        cluster_name: "{{ cluster_name }}"
+        nodegroup_name: "{{ node_group_name }}"
+        region: "{{ aws_region }}"
+      ignore_errors: yes
+
+    - name: Delete EKS Cluster
+      community.aws.eks_cluster:
+        name: "{{ cluster_name }}"
+        state: absent
+        region: "{{ aws_region }}"
+      ignore_errors: yes
+
+    - name: Remove Cluster from CAST AI
+      uri:
+        url: "https://api.cast.ai/v1/kubernetes/external-clusters/{{ cluster_name }}"
+        method: DELETE
+        headers:
+          Authorization: "Bearer {{ cast_ai_api_token }}"
+      ignore_errors: yes
+
+    - name: Delete Public Subnets
+      community.aws.ec2_vpc_subnet:
+        state: absent
+        region: "{{ aws_region }}"
+        subnet_id: "{{ item.subnet.id }}"
+      loop: "{{ public_subnets.results }}"
+      ignore_errors: yes
+
+    - name: Delete Private Subnets
+      community.aws.ec2_vpc_subnet:
+        state: absent
+        region: "{{ aws_region }}"
+        subnet_id: "{{ item.subnet.id }}"
+      loop: "{{ private_subnets.results }}"
+      ignore_errors: yes
+
+    - name: Detach and Delete Internet Gateway
+      community.aws.ec2_vpc_igw:
+        igw_id: "{{ igw.gateway_id }}"
+        vpc_id: "{{ vpc.vpc.id }}"
+        region: "{{ aws_region }}"
+        state: absent
+      ignore_errors: yes
 
     - name: Delete VPC
-      ec2_vpc_net:
-        name: eks-vpc
-        region: us-east-2
+      community.aws.ec2_vpc_net:
+        vpc_id: "{{ vpc.vpc.id }}"
+        region: "{{ aws_region }}"
         state: absent
+      ignore_errors: yes
+
 
