@@ -64,3 +64,4 @@
         gateway_id: "{{ igw.gateway_id }}"
         region: "{{ aws_region }}"
         state: present
+
